@@ -1,65 +1,45 @@
-# MIT License
-#
-# Copyright (c) 2023 AnonymousX1025
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
-
+from pyrogram import Client, filters
+import datetime
+import time
+from database.users_chats_db import db
+from info import ADMINS
+from utils import broadcast_messages
 import asyncio
+        
+@Client.on_message(filters.command("broadcast") & filters.user(ADMINS) & filters.reply)
+# https://t.me/GetTGLink/4178
+async def verupikkals(bot, message):
+    users = await db.get_all_users()
+    b_msg = message.reply_to_message
+    sts = await message.reply_text(
+        text='ʙʀᴏᴀᴅᴄᴀsᴛɪɴɢ ᴜʀ ᴍᴇssᴀɢᴇ ᴛᴏ ᴛʜɪs ʙᴏᴛ ᴜsᴇʀs...'
+    )
+    start_time = time.time()
+    total_users = await db.total_users_count()
+    done = 0
+    blocked = 0
+    deleted = 0
+    failed =0
 
-from pyrogram import filters
-from pyrogram.errors import FloodWait
-from pyrogram.types import Message
-
-from config import OWNER_ID
-from FallenMusic import app, app2
-
-
-@app.on_message(filters.command("broadcast") & filters.user(OWNER_ID))
-async def broadcast(_, message: Message):
-    brep = await message.reply_text("sᴛᴀʀᴛᴇᴅ ᴀssɪsᴛᴀɴᴛ ʙʀᴏᴀᴅᴄᴀsᴛ...")
-    if message.reply_to_message:
-        x = message.reply_to_message.id
-        y = message.chat.id
-    else:
-        if len(message.command) < 2:
-            return await message.reply_text(
-                "**ᴇxᴀᴍᴘʟᴇ:**\n\n/broadcast [ᴍᴇssᴀɢᴇ] ᴏʀ [ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴍᴇssᴀɢᴇ]"
-            )
-        query = message.text.split(None, 1)[1]
-    sent = 0
-    chats = []
-    async for dialog in app2.get_dialogs():
-        chats.append(int(dialog.chat.id))
-    for i in chats:
-        try:
-            await app2.forward_messages(
-                i, y, x
-            ) if message.reply_to_message else await app2.send_message(i, text=query)
-            sent += 1
-        except FloodWait as e:
-            flood_time = int(e.value)
-            if flood_time > 200:
-                continue
-            await asyncio.sleep(flood_time)
-        except Exception:
-            continue
-    try:
-        await brep.edit_text(f"**ʙʀᴏᴀᴅᴄᴀsᴛᴇᴅ ᴍᴇssᴀɢᴇ ɪɴ {sent} ᴄʜᴀᴛs.**")
-    except:
-        await message.reply_text(f"**ʙʀᴏᴀᴅᴄᴀsᴛᴇᴅ ᴍᴇssᴀɢᴇ ɪɴ {sent} ᴄʜᴀᴛs.**")
+    success = 0
+    async for user in users:
+        pti, sh = await broadcast_messages(int(user['id']), b_msg)
+        if pti:
+            success += 1
+        elif pti == False:
+            if sh == "Blocked":
+                blocked+=1
+            elif sh == "Deleted":
+                deleted += 1
+            elif sh == "Error":
+                failed += 1
+        done += 1
+        await asyncio.sleep(2)
+        if not done % 20:
+            await sts.edit(f"ʙʀᴏᴀᴅᴄᴀsᴛ ɪɴ ᴘʀᴏɢʀᴇss:\n\nᴛᴏᴛᴀʟ ᴜsᴇʀs {total_users}\nᴄᴏᴍᴘʟᴇᴛᴇᴅ: {done} / {total_users}\nsᴜᴄᴄᴇss: {success}\nʙʟᴏᴄᴋᴇᴅ: {blocked}\nᴅᴇʟᴇᴛᴇᴅ: {deleted}")    
+    time_taken = datetime.timedelta(seconds=int(time.time()-start_time))
+    await sts.edit(f"ʙʀᴏᴀᴅᴄᴀsᴛ sᴜᴄᴄᴇssғᴜʟʟʏ ᴄᴏᴍᴘʟᴇᴛᴇᴅ:\nʙʀᴏᴀᴅᴄᴀsᴛ ᴄᴏᴍᴘʟᴇᴛᴇᴅ ɪɴ{time_taken} sᴇᴄᴏɴᴅs.\n\nᴛᴏᴛᴀʟ ᴜsᴇʀs {total_users}\nᴄᴏᴍᴘʟᴇᴛᴇᴅ: {done} / {total_users}\nsᴜᴄᴄᴇss: {success}\nʙʟᴏᴄᴋᴇᴅ: {blocked}\nᴅᴇʟᴇᴛᴇᴅ: {deleted}")
+Footer
+© 2023 GitHub, Inc.
+Footer navigation
+Terms
