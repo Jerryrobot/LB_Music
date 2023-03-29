@@ -39,7 +39,3 @@ async def verupikkals(bot, message):
             await sts.edit(f"ʙʀᴏᴀᴅᴄᴀsᴛ ɪɴ ᴘʀᴏɢʀᴇss:\n\nᴛᴏᴛᴀʟ ᴜsᴇʀs {total_users}\nᴄᴏᴍᴘʟᴇᴛᴇᴅ: {done} / {total_users}\nsᴜᴄᴄᴇss: {success}\nʙʟᴏᴄᴋᴇᴅ: {blocked}\nᴅᴇʟᴇᴛᴇᴅ: {deleted}")    
     time_taken = datetime.timedelta(seconds=int(time.time()-start_time))
     await sts.edit(f"ʙʀᴏᴀᴅᴄᴀsᴛ sᴜᴄᴄᴇssғᴜʟʟʏ ᴄᴏᴍᴘʟᴇᴛᴇᴅ:\nʙʀᴏᴀᴅᴄᴀsᴛ ᴄᴏᴍᴘʟᴇᴛᴇᴅ ɪɴ{time_taken} sᴇᴄᴏɴᴅs.\n\nᴛᴏᴛᴀʟ ᴜsᴇʀs {total_users}\nᴄᴏᴍᴘʟᴇᴛᴇᴅ: {done} / {total_users}\nsᴜᴄᴄᴇss: {success}\nʙʟᴏᴄᴋᴇᴅ: {blocked}\nᴅᴇʟᴇᴛᴇᴅ: {deleted}")
-Footer
-© 2023 GitHub, Inc.
-Footer navigation
-Terms
